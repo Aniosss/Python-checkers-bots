@@ -13,13 +13,11 @@ class Game:
 
         self.player_turn = True
 
-
-
     def __handle_move(self, move: Move, draw: bool = True) -> bool:
         '''Совершение хода'''
 
         # Изменение типа шашки, если она дошла до края
-        if (move.to_y == 0 and self.field.type_at(move.from_x, move.from_y) == CheckerType.WHITE_REGULAR):
+        if move.to_y == 0 and self.field.type_at(move.from_x, move.from_y) == CheckerType.WHITE_REGULAR:
             self.field.at(move.from_x, move.from_y).change_type(CheckerType.WHITE_QUEEN)
         elif (move.to_y == self.field.y_size - 1 and self.field.type_at(move.from_x,
                                                                         move.from_y) == CheckerType.BLACK_REGULAR):
@@ -36,13 +34,12 @@ class Game:
         # Удаление съеденных шашек
         has_killed_checker = False
         x, y = move.to_x, move.to_y
-        while (x != move.from_x or y != move.from_y):
+        while x != move.from_x or y != move.from_y:
             x += dx
             y += dy
-            if (self.field.type_at(x, y) != CheckerType.NONE):
+            if self.field.type_at(x, y) != CheckerType.NONE:
                 self.field.at(x, y).change_type(CheckerType.NONE)
                 has_killed_checker = True
-
 
         return has_killed_checker
 
@@ -52,36 +49,36 @@ class Game:
         optimal_moves = []
         predicted_moves_list = self.get_predicted_moves_list(side)
 
-        if (predicted_moves_list):
+        if predicted_moves_list:
             field_copy = Field.copy(self.field)
             for moves in predicted_moves_list:
                 for move in moves:
                     self.__handle_move(move, draw=False)
 
                 try:
-                    if (side == SideType.WHITE):
+                    if side == SideType.WHITE:
                         result = self.field.white_score / self.field.black_score
-                    elif (side == SideType.BLACK):
+                    elif side == SideType.BLACK:
                         result = self.field.black_score / self.field.white_score
                 except ZeroDivisionError:
                     result = inf
 
-                if (result > best_result):
+                if result > best_result:
                     best_result = result
                     optimal_moves.clear()
                     optimal_moves.append(moves)
-                elif (result == best_result):
+                elif result == best_result:
                     optimal_moves.append(moves)
 
                 self.field = Field.copy(field_copy)
 
         optimal_move = []
-        if (optimal_moves):
+        if optimal_moves:
             # Фильтрация хода
             for move in choice(optimal_moves):
-                if (side == SideType.WHITE and self.field.type_at(move.from_x, move.from_y) in BLACK_CHECKERS):
+                if side == SideType.WHITE and self.field.type_at(move.from_x, move.from_y) in BLACK_CHECKERS:
                     break
-                elif (side == SideType.BLACK and self.field.type_at(move.from_x, move.from_y) in WHITE_CHECKERS):
+                elif side == SideType.BLACK and self.field.type_at(move.from_x, move.from_y) in WHITE_CHECKERS:
                     break
 
                 optimal_move.append(move)
@@ -93,17 +90,17 @@ class Game:
                                  required_moves_list=[]):
         '''Предсказать все возможные ходы'''
 
-        if (current_moves_list):
+        if current_moves_list:
             all_moves_list.append(current_moves_list)
         else:
             all_moves_list.clear()
 
-        if (required_moves_list):
+        if required_moves_list:
             moves_list = required_moves_list
         else:
             moves_list = self.get_moves_list(side)
 
-        if (moves_list and current_prediction_depth < MAX_PREDICTION_DEPTH):
+        if moves_list and current_prediction_depth < MAX_PREDICTION_DEPTH:
             field_copy = Field.copy(self.field)
             for move in moves_list:
                 has_killed_checker = self.__handle_move(move, draw=False)
@@ -113,7 +110,7 @@ class Game:
                     self.get_required_moves_list(side)))
 
                 # Если есть ещё ход этой же шашкой
-                if (has_killed_checker and required_moves_list):
+                if has_killed_checker and required_moves_list:
                     self.get_predicted_moves_list(side, current_prediction_depth, all_moves_list,
                                                   current_moves_list + [move], required_moves_list)
                 else:
@@ -136,10 +133,10 @@ class Game:
         moves_list = []
 
         # Определение типов шашек
-        if (side == SideType.WHITE):
+        if side == SideType.WHITE:
             friendly_checkers = WHITE_CHECKERS
             enemy_checkers = BLACK_CHECKERS
-        elif (side == SideType.BLACK):
+        elif side == SideType.BLACK:
             friendly_checkers = BLACK_CHECKERS
             enemy_checkers = WHITE_CHECKERS
         else:
@@ -149,7 +146,7 @@ class Game:
             for x in range(self.field.x_size):
 
                 # Для обычной шашки
-                if (self.field.type_at(x, y) == friendly_checkers[0]):
+                if self.field.type_at(x, y) == friendly_checkers[0]:
                     for offset in MOVE_OFFSETS:
                         if not (self.field.is_within(x + offset.x * 2, y + offset.y * 2)): continue
 
@@ -158,7 +155,7 @@ class Game:
                             moves_list.append(Move(x, y, x + offset.x * 2, y + offset.y * 2))
 
                 # Для дамки
-                elif (self.field.type_at(x, y) == friendly_checkers[1]):
+                elif self.field.type_at(x, y) == friendly_checkers[1]:
                     for offset in MOVE_OFFSETS:
                         if not (self.field.is_within(x + offset.x * 2, y + offset.y * 2)): continue
 
@@ -168,8 +165,8 @@ class Game:
                             if not (self.field.is_within(x + offset.x * shift, y + offset.y * shift)): continue
 
                             # Если на пути не было вражеской шашки
-                            if (not has_enemy_checker_on_way):
-                                if (self.field.type_at(x + offset.x * shift, y + offset.y * shift) in enemy_checkers):
+                            if not has_enemy_checker_on_way:
+                                if self.field.type_at(x + offset.x * shift, y + offset.y * shift) in enemy_checkers:
                                     has_enemy_checker_on_way = True
                                     continue
                                 # Если на пути союзная шашка - то закончить цикл
@@ -178,7 +175,7 @@ class Game:
                                     break
 
                             # Если на пути была вражеская шашка
-                            if (has_enemy_checker_on_way):
+                            if has_enemy_checker_on_way:
                                 if (self.field.type_at(x + offset.x * shift,
                                                        y + offset.y * shift) == CheckerType.NONE):
                                     moves_list.append(Move(x, y, x + offset.x * shift, y + offset.y * shift))
@@ -192,9 +189,9 @@ class Game:
         moves_list = []
 
         # Определение типов шашек
-        if (side == SideType.WHITE):
+        if side == SideType.WHITE:
             friendly_checkers = WHITE_CHECKERS
-        elif (side == SideType.BLACK):
+        elif side == SideType.BLACK:
             friendly_checkers = BLACK_CHECKERS
         else:
             return moves_list
@@ -202,22 +199,24 @@ class Game:
         for y in range(self.field.y_size):
             for x in range(self.field.x_size):
                 # Для обычной шашки
-                if (self.field.type_at(x, y) == friendly_checkers[0]):
+                if self.field.type_at(x, y) == friendly_checkers[0]:
                     for offset in MOVE_OFFSETS[:2] if side == SideType.WHITE else MOVE_OFFSETS[2:]:
                         if not (self.field.is_within(x + offset.x, y + offset.y)): continue
 
-                        if (self.field.type_at(x + offset.x, y + offset.y) == CheckerType.NONE):
+                        if self.field.type_at(x + offset.x, y + offset.y) == CheckerType.NONE:
                             moves_list.append(Move(x, y, x + offset.x, y + offset.y))
 
                 # Для дамки
-                elif (self.field.type_at(x, y) == friendly_checkers[1]):
+                elif self.field.type_at(x, y) == friendly_checkers[1]:
                     for offset in MOVE_OFFSETS:
-                        if not (self.field.is_within(x + offset.x, y + offset.y)): continue
+                        if not self.field.is_within(x + offset.x, y + offset.y):
+                            continue
 
                         for shift in range(1, self.field.size):
-                            if not (self.field.is_within(x + offset.x * shift, y + offset.y * shift)): continue
+                            if not (self.field.is_within(x + offset.x * shift, y + offset.y * shift)):
+                                continue
 
-                            if (self.field.type_at(x + offset.x * shift, y + offset.y * shift) == CheckerType.NONE):
+                            if self.field.type_at(x + offset.x * shift, y + offset.y * shift) == CheckerType.NONE:
                                 moves_list.append(Move(x, y, x + offset.x * shift, y + offset.y * shift))
                             else:
                                 break
