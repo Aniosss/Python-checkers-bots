@@ -1,6 +1,7 @@
 from checkers.point import Point
 from checkers.enums import CheckerType, SideType
 
+
 # Сторона за которую играет игрок
 PLAYER_SIDE = SideType.WHITE
 

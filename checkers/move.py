@@ -16,7 +16,7 @@ class Move:
     @property
     def to_x(self):
         return self.__to_x
-        
+
     @property
     def to_y(self):
         return self.__to_y

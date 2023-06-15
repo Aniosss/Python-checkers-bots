@@ -1,6 +1,4 @@
 from random import choice
-from pathlib import Path
-from time import sleep
 from math import inf
 
 from checkers.field import Field

@@ -4,6 +4,7 @@ from checkers.game import Game
 from checkers.constants import X_SIZE, Y_SIZE, CELL_SIZE
 from checkers.draw import UI
 
+
 def main():
     # Создание окна
     main_window = Tk()
@@ -20,6 +21,7 @@ def main():
     main_canvas.bind("<Button-1>", ui.mouse_down)
 
     main_window.mainloop()
+
 
 if __name__ == '__main__':
     main()

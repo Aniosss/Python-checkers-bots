@@ -3,12 +3,11 @@ from PIL import Image, ImageTk
 from pathlib import Path
 from time import sleep
 
-
-from checkers.field import Field
 from checkers.move import Move
 from checkers.constants import *
 from checkers.enums import CheckerType, SideType
 from checkers.game import Game
+
 
 class UI:
     def __init__(self, canvas: Canvas, game: Game):

@@ -1,9 +1,9 @@
 from checkers.enums import CheckerType
 from checkers.checker import Checker
 from checkers.constants import WHITE_CHECKERS, BLACK_CHECKERS
-from checkers.point import Point
 
 from functools import reduce
+
 
 class Field:
     def __init__(self, x_size: int, y_size: int):
@@ -37,7 +37,7 @@ class Field:
     def __generate(self):
         '''Генерация поля с шашками'''
         self.__checkers = [[Checker() for x in range(self.x_size)] for y in range(self.y_size)]
-        
+
         for y in range(self.y_size):
             for x in range(self.x_size):
                 if ((y + x) % 2):
@@ -72,7 +72,7 @@ class Field:
     def white_score(self) -> int:
         '''Счёт белых'''
         return sum(reduce(lambda acc, checker: acc + (checker.type == CheckerType.WHITE_REGULAR) + (checker.type == CheckerType.WHITE_QUEEN) * 3, checkers, 0) for checkers in self.__checkers)
-    
+
     @property
     def black_score(self) -> int:
         '''Счёт чёрных'''
