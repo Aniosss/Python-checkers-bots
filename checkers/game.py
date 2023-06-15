@@ -1,5 +1,3 @@
-from tkinter import Canvas, Event, messagebox
-from PIL import Image, ImageTk
 from random import choice
 from pathlib import Path
 from time import sleep
